@@ -16,12 +16,6 @@ public class ProductRepository implements IProductRepository {
 
     @Override
     public Boolean addProduct(Product product) {
-        // Sprawdzenie, czy produkt już istnieje w bazie
-        if (findById(product.getId()) != null) {
-            System.out.println("Taki produkt już istnieje");
-            return false;
-        }
-
         String sql = "INSERT INTO product (id, name, description, category, isactive) VALUES (?, ?, ?, ?, ?)";
 
         try (
@@ -44,6 +38,7 @@ public class ProductRepository implements IProductRepository {
     @Override
     public Boolean deleteById(String id) {
         String sql = "DELETE FROM product WHERE id = ?";
+
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)
@@ -60,6 +55,7 @@ public class ProductRepository implements IProductRepository {
     public List<Product> findAll() {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT * FROM product";
+
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql);
