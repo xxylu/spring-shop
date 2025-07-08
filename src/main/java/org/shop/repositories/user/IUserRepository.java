@@ -8,8 +8,9 @@ import java.util.Optional;
 public interface IUserRepository {
     List<User> findAll();
     Optional<User> findById(String id);
-    User findByUsername(String username);
+    Optional<User>  findByUsername(String username);
     Boolean isUserActive(String id);
-    boolean userExists(String login);
+    Boolean userExists(String login);
     void addUser(User user);
+    Boolean checkUserCredentials(String login, String password);
 }

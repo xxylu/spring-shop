@@ -11,7 +11,9 @@ import java.util.Optional;
 import org.shop.database.DatabaseConnection;
 import org.shop.models.user.Role;
 import org.shop.models.user.User;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class UserRepository implements IUserRepository{
 
     @Override
@@ -82,7 +84,7 @@ public class UserRepository implements IUserRepository{
     }
 
     @Override
-    public User findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         String sql = "SELECT * FROM users WHERE login = ?";
 
         try (
@@ -101,16 +103,16 @@ public class UserRepository implements IUserRepository{
                     throw new RuntimeException("Unknown role: " + roleStr, e);
                 }
 
-                return User.builder()
+                User user = User.builder()
                         .id(rs.getString("id"))
                         .login(rs.getString("login"))
                         .password(rs.getString("password"))
                         .isActive(rs.getBoolean("isActive"))
                         .role(role)
                         .build();
-            } else {
-                return null;
+                return Optional.of(user);
             }
+            return Optional.empty();
         } catch (SQLException e) {
             throw new RuntimeException("Error occurred while querying user by username", e);
         }
@@ -138,7 +140,7 @@ public class UserRepository implements IUserRepository{
     }
 
     @Override
-    public boolean userExists(String login) {
+    public Boolean userExists(String login) {
         String sql = "SELECT 1 FROM users WHERE login = ?";
 
         try (
@@ -157,10 +159,6 @@ public class UserRepository implements IUserRepository{
     public void addUser(User user) {
         String sql = "INSERT INTO users (id, login, password, role, isActive) VALUES (?, ?, ?, ?, ?)";
 
-        if (userExists(user.getLogin())) {
-            throw new RuntimeException("User already exists");
-        }
-
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement stmt = connection.prepareStatement(sql)
@@ -175,5 +173,11 @@ public class UserRepository implements IUserRepository{
         } catch (SQLException e) {
             throw new RuntimeException("Error occurred while adding user", e);
         }
+    }
+
+    @Override
+    public Boolean checkUserCredentials(String login, String password) {
+
+        return false;
     }
 }
