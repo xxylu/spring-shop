@@ -1,4 +1,4 @@
-package org.example.models.user;
+package org.shop.models.user;
 
 import lombok.*;
 

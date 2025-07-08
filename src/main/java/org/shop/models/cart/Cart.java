@@ -1,9 +1,9 @@
-package org.example.models.cart;
+package org.shop.models.cart;
 
 
 import lombok.*;
 import java.util.List;
-import org.example.models.product.Product;
+import org.shop.models.product.Product;
 
 @Data
 @NoArgsConstructor

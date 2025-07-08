@@ -1,4 +1,4 @@
-package org.example.models.product;
+package org.shop.models.product;
 
 public enum ProductCategory {
     Electronics,
