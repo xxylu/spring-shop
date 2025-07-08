@@ -1,15 +1,15 @@
-package org.example.current;
+package org.shop.current;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(basePackages = {
-        "org.example.controllers",
-        "org.example.services",
-        "org.example.repositories",
-        "org.example.models",
-        "org.example.security"
+        "org.shop.controllers",
+        "org.shop.services",
+        "org.shop.repositories",
+        "org.shop.models",
+        "org.shop.security"
 })
 
 
