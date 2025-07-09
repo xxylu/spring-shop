@@ -14,12 +14,12 @@ import org.shop.models.user.User;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class UserRepository implements IUserRepository{
+public class UserRepository implements IUserRepository {
 
     @Override
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-        String sql = "select * from users";
+        String sql = "SELECT * FROM users";
 
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
@@ -27,7 +27,7 @@ public class UserRepository implements IUserRepository{
                 ResultSet rs = stmt.executeQuery()
         ) {
             while (rs.next()) {
-                String roleStr = rs.getString("role");
+                String roleStr = rs.getString("roles");
                 Role role;
                 try {
                     role = Role.valueOf(roleStr.toUpperCase());
@@ -36,33 +36,32 @@ public class UserRepository implements IUserRepository{
                 }
 
                 User user = User.builder()
-                        .id(rs.getString("id"))
+                        .userid(rs.getString("userid"))
                         .login(rs.getString("login"))
-                        .password(rs.getString("password"))
-                        .isActive(rs.getBoolean("isactive"))
-                        .role(role)
+                        .passwd(rs.getString("passwd"))
+                        .roles(role)
+                        .isActive(rs.getBoolean("isActive"))
                         .build();
                 users.add(user);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error occuerd while reading database", e);
+            throw new RuntimeException("Error occurred while reading database", e);
         }
         return users;
     }
 
     @Override
     public Optional<User> findById(String id) {
-        String sql = "select * from users where id = ?";
-
+        String sql = "SELECT * FROM users WHERE userid = ?";
 
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement stmt = connection.prepareStatement(sql)
         ) {
-            stmt.setString(1, id);             // ustawiamy parametr
-            try (ResultSet rs = stmt.executeQuery()) {  // otwieramy ResultSet w try-with-resources
+            stmt.setString(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    String roleStr = rs.getString("role");
+                    String roleStr = rs.getString("roles");
                     Role role;
                     try {
                         role = Role.valueOf(roleStr.toUpperCase());
@@ -71,21 +70,18 @@ public class UserRepository implements IUserRepository{
                     }
 
                     User user = User.builder()
-                            .id(rs.getString("id"))
+                            .userid(rs.getString("userid"))
                             .login(rs.getString("login"))
-                            .password(rs.getString("password"))
-                            .isActive(rs.getBoolean("isactive"))
-                            .role(role)
+                            .passwd(rs.getString("passwd"))
+                            .roles(role)
+                            .isActive(rs.getBoolean("isActive"))
                             .build();
                     return Optional.of(user);
                 }
                 return Optional.empty();
             }
-            catch (SQLException e) {
-                throw new RuntimeException("Error occuerd while reading database", e);
-            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error occurred while reading database", e);
         }
     }
 
@@ -99,9 +95,8 @@ public class UserRepository implements IUserRepository{
         ) {
             stmt.setString(1, login);
             try (ResultSet rs = stmt.executeQuery()) {
-
                 if (rs.next()) {
-                    String roleStr = rs.getString("role");
+                    String roleStr = rs.getString("roles");
                     Role role;
                     try {
                         role = Role.valueOf(roleStr.toUpperCase());
@@ -110,35 +105,33 @@ public class UserRepository implements IUserRepository{
                     }
 
                     User user = User.builder()
-                            .id(rs.getString("id"))
+                            .userid(rs.getString("userid"))
                             .login(rs.getString("login"))
-                            .password(rs.getString("password"))
-                            .isActive(rs.getBoolean("isactive"))
-                            .role(role)
+                            .passwd(rs.getString("passwd"))
+                            .roles(role)
+                            .isActive(rs.getBoolean("isActive"))
                             .build();
                     return Optional.of(user);
                 }
                 return Optional.empty();
-            } catch (SQLException e) {
-                throw new RuntimeException("Error occurred while querying user by username", e);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error occuerd while reading database", e);
+            throw new RuntimeException("Error occurred while querying user by username", e);
         }
     }
 
     @Override
     public void addUser(User user) {
-        String sql = "INSERT INTO users (id, login, password, role, isActive) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (userid, login, passwd, roles, isActive) VALUES (?, ?, ?, ?, ?)";
 
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement stmt = connection.prepareStatement(sql)
         ) {
-            stmt.setString(1, user.getId());
+            stmt.setString(1, user.getUserid());
             stmt.setString(2, user.getLogin());
-            stmt.setString(3, user.getPassword());
-            stmt.setString(4, user.getRole().name());
+            stmt.setString(3, user.getPasswd());
+            stmt.setString(4, user.getRoles().name());
             stmt.setBoolean(5, user.getIsActive());
 
             stmt.executeUpdate();
@@ -149,21 +142,36 @@ public class UserRepository implements IUserRepository{
 
     @Override
     public void updateUser(User user) {
-        String sql = "UPDATE users SET login = ?, password = ?, role = ?, isactive = ? WHERE id = ?";
+        String sql = "UPDATE users SET login = ?, passwd = ?, roles = ?, isActive = ? WHERE userid = ?";
 
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
+                PreparedStatement stmt = connection.prepareStatement(sql)
         ) {
-            statement.setString(1, user.getLogin());
-            statement.setString(2, user.getPassword());
-            statement.setString(3, user.getRole().name()); // zakładam, że Role to enum
-            statement.setBoolean(4, user.getIsActive());
-            statement.setString(5, user.getId());
+            stmt.setString(1, user.getLogin());
+            stmt.setString(2, user.getPasswd());
+            stmt.setString(3, user.getRoles().name());
+            stmt.setBoolean(4, user.getIsActive());
+            stmt.setString(5, user.getUserid());
 
-            statement.executeUpdate();
+            stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error occurred while adding user", e);
+            throw new RuntimeException("Error occurred while updating user", e);
+        }
+    }
+
+    @Override
+    public void deleteUser(String userid) {
+        String sql = "DELETE FROM users WHERE userid = ?";
+
+        try (
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = connection.prepareStatement(sql)
+        ) {
+            stmt.setString(1, userid);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error occurred while deleting user", e);
         }
     }
 }

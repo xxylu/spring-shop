@@ -10,51 +10,50 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.UUID;
 
 public class ProductRepository implements IProductRepository {
 
     @Override
-    public Boolean addProduct(Product product) {
-        String sql = "INSERT INTO product (id, name, description, category, isactive) VALUES (?, ?, ?, ?, ?)";
+    public void addProduct(Product product) {
+        String sql = "INSERT INTO products (productid, price, title, description, category, isactive) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)
         ) {
-            statement.setString(1, product.getId());
-            statement.setString(2, product.getName());
-            statement.setString(3, product.getDescription());
-            statement.setString(4, product.getCategory().name());
-            statement.setBoolean(5, Boolean.TRUE.equals(product.getIsactive())); // zabezpieczenie przed null
+            statement.setString(1, UUID.randomUUID().toString());
+            statement.setDouble(2, product.getPrice());
+            statement.setString(3, product.getTitle());
+            statement.setString(4, product.getDescription());
+            statement.setString(5, product.getCategory().name());
+            statement.setBoolean(6, Boolean.TRUE.equals(product.getIsactive())); // zabezpieczenie przed null
 
             statement.executeUpdate();
-            return true;
         } catch (SQLException e) {
             throw new RuntimeException("Error occurred while saving product", e);
         }
     }
 
     @Override
-    public Boolean deleteById(String id) {
-        String sql = "DELETE FROM product WHERE id = ?";
+    public void deleteById(String id) {
+        String sql = "UPDATE products SET isactive = FALSE WHERE id = ?";
 
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)
         ) {
             statement.setString(1, id);
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
+            statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error occurred while deleting product", e);
+            throw new RuntimeException("Error occurred while deactivating product", e);
         }
     }
 
     @Override
     public List<Product> findAll() {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT * FROM product";
+        String sql = "SELECT * FROM products";
 
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
@@ -73,7 +72,7 @@ public class ProductRepository implements IProductRepository {
 
     @Override
     public Product findByName(String name) {
-        String sql = "SELECT * FROM product WHERE name = ?";
+        String sql = "SELECT * FROM products WHERE title = ?";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)
@@ -92,7 +91,7 @@ public class ProductRepository implements IProductRepository {
 
     @Override
     public Product findById(String id) {
-        String sql = "SELECT * FROM product WHERE id = ?";
+        String sql = "SELECT * FROM products WHERE id = ?";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)
@@ -111,8 +110,9 @@ public class ProductRepository implements IProductRepository {
 
     private static Product mapResultSetToProduct(ResultSet rs) throws SQLException {
         return Product.builder()
-                .id(rs.getString("id"))
-                .name(rs.getString("name"))
+                .id(rs.getString("productid"))
+                .price(rs.getDouble("price"))
+                .title(rs.getString("title"))
                 .description(rs.getString("description"))
                 .category(ProductCategory.valueOf(rs.getString("category")))
                 .isactive(rs.getBoolean("isactive"))

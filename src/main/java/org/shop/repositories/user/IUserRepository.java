@@ -11,4 +11,5 @@ public interface IUserRepository {
     Optional<User>  findByUsername(String username);
     void addUser(User user);
     void updateUser(User user);
+    void deleteUser(String id);
 }
