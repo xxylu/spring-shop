@@ -84,14 +84,14 @@ public class UserRepository implements IUserRepository{
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
+    public Optional<User> findByUsername(String login) {
         String sql = "SELECT * FROM users WHERE login = ?";
 
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement stmt = connection.prepareStatement(sql)
         ) {
-            stmt.setString(1, username);
+            stmt.setString(1, login);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -119,43 +119,6 @@ public class UserRepository implements IUserRepository{
     }
 
     @Override
-    public Boolean isUserActive(String id) {
-        String sql = "SELECT isActive FROM users WHERE id = ?";
-
-        try (
-                Connection connection = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement stmt = connection.prepareStatement(sql)
-        ) {
-            stmt.setString(1, id);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getBoolean("isActive");
-            } else {
-                return null;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error occurred while checking user activity", e);
-        }
-    }
-
-    @Override
-    public Boolean userExists(String login) {
-        String sql = "SELECT 1 FROM users WHERE login = ?";
-
-        try (
-                Connection connection = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement stmt = connection.prepareStatement(sql)
-        ) {
-            stmt.setString(1, login);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next();
-        } catch (SQLException e) {
-            throw new RuntimeException("Error occurred while checking if user exists", e);
-        }
-    }
-
-    @Override
     public void addUser(User user) {
         String sql = "INSERT INTO users (id, login, password, role, isActive) VALUES (?, ?, ?, ?, ?)";
 
@@ -176,8 +139,22 @@ public class UserRepository implements IUserRepository{
     }
 
     @Override
-    public Boolean checkUserCredentials(String login, String password) {
+    public void updateUser(User user) {
+        String sql = "UPDATE users SET login = ?, password = ?, role = ?, is_active = ? WHERE id = ?";
 
-        return false;
+        try (
+                Connection connection = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setString(1, user.getLogin());
+            statement.setString(2, user.getPassword());
+            statement.setString(3, user.getRole().name()); // zakładam, że Role to enum
+            statement.setBoolean(4, user.getIsActive());
+            statement.setString(5, user.getId());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error occurred while adding user", e);
+        }
     }
 }

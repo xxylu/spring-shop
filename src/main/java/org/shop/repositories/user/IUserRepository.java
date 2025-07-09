@@ -9,8 +9,6 @@ public interface IUserRepository {
     List<User> findAll();
     Optional<User> findById(String id);
     Optional<User>  findByUsername(String username);
-    Boolean isUserActive(String id);
-    Boolean userExists(String login);
     void addUser(User user);
-    Boolean checkUserCredentials(String login, String password);
+    void updateUser(User user);
 }
