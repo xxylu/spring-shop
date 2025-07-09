@@ -2,7 +2,6 @@ package org.shop.services.authentication;
 
 import org.shop.models.user.Role;
 import org.shop.models.user.User;
-import org.shop.repositories.admin.AdminRepository;
 import org.shop.repositories.user.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +11,6 @@ import java.util.UUID;
 @Service
 public class AuthService implements IAuthService {
     private final UserRepository userRepository = new UserRepository();
-    private final AdminRepository adminRepository = new AdminRepository();
 
     @Override
     public Boolean isUserActive(String id) {
