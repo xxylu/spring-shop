@@ -3,7 +3,6 @@ package org.shop.services.authentication;
 import org.mindrot.jbcrypt.BCrypt;
 import org.shop.models.user.Role;
 import org.shop.models.user.User;
-import org.shop.repositories.user.IUserRepository;
 import org.shop.repositories.user.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +12,6 @@ import java.util.UUID;
 @Service
 public class AuthService implements IAuthService {
     private final UserRepository userRepository = new UserRepository();
-
 
     @Override
     public Boolean isUserActive(String id) {
@@ -30,7 +28,7 @@ public class AuthService implements IAuthService {
     @Override
     public Boolean checkUserCredentials(String login, String rawPassword) {
         Optional<User> user = userRepository.findByUsername(login);
-        return user.isPresent() && BCrypt.checkpw(rawPassword, user.get().getPassword());
+        return user.isPresent() && BCrypt.checkpw(rawPassword, user.get().getPasswd());
     }
 
     @Override
@@ -55,10 +53,10 @@ public class AuthService implements IAuthService {
             String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
 
             User user = User.builder()
-                    .id(UUID.randomUUID().toString())
+                    .userid(UUID.randomUUID().toString())
                     .login(username)
-                    .password(hashed)
-                    .role(role)
+                    .passwd(hashed)
+                    .roles(role)
                     .isActive(false)
                     .build();
 
@@ -68,5 +66,42 @@ public class AuthService implements IAuthService {
         }
         System.out.println("User już istnieje");
         return false;
+    }
+
+    @Override
+    public void deleteUser(String adminId, String userId) {
+        Optional<User> admin = userRepository.findById(adminId);
+        Optional<User> user = userRepository.findById(userId);
+        if(admin.isEmpty() && user.isEmpty()) {
+            System.out.println("Któryś z userów nie istneje");
+            return;
+        }
+
+        if(admin.get().getRoles() != Role.ADMIN) {
+            System.out.println("Brak uprawnień");
+            return;
+        }
+        user.get().setIsActive(false);
+        userRepository.updateUser(user.get());
+        System.out.println("usunięto usera z bazy (isActive = false)");
+    }
+
+    @Override
+    public void activateUser(String adminId, String userId) {
+        Optional<User> admin = userRepository.findById(adminId);
+        Optional<User> user = userRepository.findById(userId);
+        if(admin.isEmpty() && user.isEmpty()) {
+            System.out.println("Któryś z userów nie istneje");
+            return;
+        }
+
+        if(admin.get().getRoles() != Role.ADMIN) {
+            System.out.println("Brak uprawnień");
+            return;
+        }
+
+        user.get().setIsActive(true);
+        userRepository.updateUser(user.get());
+        System.out.println("Aktywowano konto");
     }
 }

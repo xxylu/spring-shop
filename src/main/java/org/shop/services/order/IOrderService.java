@@ -1,12 +1,12 @@
 package org.shop.services.order;
 
 import org.shop.models.order.Order;
-import org.shop.models.product.Product;
 
 public interface IOrderService {
-    void updateOrder(Order Order, String userId);
+    void createOrder(String userId, String cartId);
+    void updateStatus(String orderId, String userId, String status);
     void deleteOrder(String orderId, String userId);
-    void addProductToOrder(String orderId, String userId, Product product);
-    Boolean deleteProductFromOrder(String orderId, String userId, Product product);
+    void addProductToOrder(String orderId, String userId, String productId);
+    Boolean deleteProductFromOrder(String orderId, String userId, String productId);
     Boolean isBelongsToUser(String orderId, String userId);
 }

@@ -1,9 +1,13 @@
-package org.shop.services.admin;
+package org.shop.services.cart;
 
-public interface IAdminService {
-    void BanUser(String userId);
-    void UnBanUser(String userId);
-    void updateUser(String id, String status);
-    void ChangeOrderStatus(String id, String status);
+import org.shop.models.cart.Cart;
+import org.shop.models.product.Product;
 
+public interface ICartService {
+    String createCart(String userId);
+    void deleteCart(String userId);
+    void addToCart(String userId, String cartId, String productId);
+    void removeFromCart(String userId, String cartId, String productId);
+    void clearCart(String cartId);
+    String getCartId(String userId);
 }
