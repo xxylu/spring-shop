@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
-import org.shop.models.product.Product;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,29 +14,26 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Order {
-    private String id;
+    private String orderid;
     private String userId;
     private OrderStatus status;
-    private String products;
+    private String products;  // JSON z listą Stringów (ID produktów)
 
-
-    public void convertToJson(List<Product> products) {
+    // Zapisuje listę ID produktów jako JSON
+    public void convertToJson(List<String> productIds) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            this.products = objectMapper.writeValueAsString(products);
+            this.products = objectMapper.writeValueAsString(productIds);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
     }
 
-    public List<Product> convertFromJson() {
+    // Odczytuje listę ID produktów z JSON
+    public List<String> convertFromJson() {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            List<Product> productList = objectMapper.readValue(
-                    this.products,
-                    new TypeReference<List<Product>>() {}
-            );
-            return productList;
+            return objectMapper.readValue(this.products, new TypeReference<List<String>>() {});
         } catch (IOException e) {
             e.printStackTrace();
             return new ArrayList<>();
