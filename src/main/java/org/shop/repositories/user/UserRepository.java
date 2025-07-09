@@ -28,7 +28,7 @@ public class UserRepository implements IUserRepository{
         ) {
             while (rs.next()) {
                 String roleStr = rs.getString("role");
-                Role role = null;
+                Role role;
                 try {
                     role = Role.valueOf(roleStr.toUpperCase());
                 } catch (IllegalArgumentException e) {
@@ -39,7 +39,7 @@ public class UserRepository implements IUserRepository{
                         .id(rs.getString("id"))
                         .login(rs.getString("login"))
                         .password(rs.getString("password"))
-                        .isActive(rs.getBoolean("isActive"))
+                        .isActive(rs.getBoolean("isactive"))
                         .role(role)
                         .build();
                 users.add(user);
@@ -54,32 +54,38 @@ public class UserRepository implements IUserRepository{
     public Optional<User> findById(String id) {
         String sql = "select * from users where id = ?";
 
+
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                ResultSet rs = stmt.executeQuery()
+                PreparedStatement stmt = connection.prepareStatement(sql)
         ) {
-            if(rs.next()) {
-                String roleStr = rs.getString("role");
-                Role role = null;
-                try {
-                    role = Role.valueOf(roleStr.toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    throw new RuntimeException("Unknown role: " + roleStr, e);
-                }
+            stmt.setString(1, id);             // ustawiamy parametr
+            try (ResultSet rs = stmt.executeQuery()) {  // otwieramy ResultSet w try-with-resources
+                if (rs.next()) {
+                    String roleStr = rs.getString("role");
+                    Role role;
+                    try {
+                        role = Role.valueOf(roleStr.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        throw new RuntimeException("Unknown role: " + roleStr, e);
+                    }
 
-                User user = User.builder()
-                        .id(rs.getString("id"))
-                        .login(rs.getString("login"))
-                        .password(rs.getString("password"))
-                        .isActive(rs.getBoolean("isActive"))
-                        .role(role)
-                        .build();
-                return Optional.of(user);
+                    User user = User.builder()
+                            .id(rs.getString("id"))
+                            .login(rs.getString("login"))
+                            .password(rs.getString("password"))
+                            .isActive(rs.getBoolean("isactive"))
+                            .role(role)
+                            .build();
+                    return Optional.of(user);
+                }
+                return Optional.empty();
             }
-            return Optional.empty();
+            catch (SQLException e) {
+                throw new RuntimeException("Error occuerd while reading database", e);
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Error occuerd while reading database", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -92,29 +98,32 @@ public class UserRepository implements IUserRepository{
                 PreparedStatement stmt = connection.prepareStatement(sql)
         ) {
             stmt.setString(1, login);
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet rs = stmt.executeQuery()) {
 
-            if (rs.next()) {
-                String roleStr = rs.getString("role");
-                Role role = null;
-                try {
-                    role = Role.valueOf(roleStr.toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    throw new RuntimeException("Unknown role: " + roleStr, e);
+                if (rs.next()) {
+                    String roleStr = rs.getString("role");
+                    Role role;
+                    try {
+                        role = Role.valueOf(roleStr.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        throw new RuntimeException("Unknown role: " + roleStr, e);
+                    }
+
+                    User user = User.builder()
+                            .id(rs.getString("id"))
+                            .login(rs.getString("login"))
+                            .password(rs.getString("password"))
+                            .isActive(rs.getBoolean("isactive"))
+                            .role(role)
+                            .build();
+                    return Optional.of(user);
                 }
-
-                User user = User.builder()
-                        .id(rs.getString("id"))
-                        .login(rs.getString("login"))
-                        .password(rs.getString("password"))
-                        .isActive(rs.getBoolean("isActive"))
-                        .role(role)
-                        .build();
-                return Optional.of(user);
+                return Optional.empty();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error occurred while querying user by username", e);
             }
-            return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException("Error occurred while querying user by username", e);
+            throw new RuntimeException("Error occuerd while reading database", e);
         }
     }
 
@@ -140,7 +149,7 @@ public class UserRepository implements IUserRepository{
 
     @Override
     public void updateUser(User user) {
-        String sql = "UPDATE users SET login = ?, password = ?, role = ?, is_active = ? WHERE id = ?";
+        String sql = "UPDATE users SET login = ?, password = ?, role = ?, isactive = ? WHERE id = ?";
 
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
