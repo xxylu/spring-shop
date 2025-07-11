@@ -7,7 +7,7 @@ import org.shop.models.Payment.PaymentStatus;
 import org.shop.models.order.Order;
 import org.shop.models.user.User;
 import org.shop.services.payment.PaymentService;
-import org.shop.services.authentication.IAuthService;
+import org.shop.services.auth.IAuthService;
 import org.shop.services.cart.ICartService;
 import org.shop.services.order.IOrderService;
 import org.shop.services.payment.PaymentUpdateService;

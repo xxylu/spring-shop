@@ -5,11 +5,9 @@ import org.shop.models.product.ProductCategory;
 import org.shop.models.user.Role;
 import org.shop.models.user.User;
 import org.shop.repositories.user.UserRepository;
-import org.shop.services.authentication.AuthService;
 import org.springframework.stereotype.Service;
 import org.shop.repositories.product.ProductRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

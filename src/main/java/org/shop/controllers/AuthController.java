@@ -3,7 +3,7 @@ package org.shop.controllers;
 import org.shop.dto.LoginRequest;
 import org.shop.models.product.Product;
 import org.shop.models.user.Role;
-import org.shop.services.authentication.IAuthService;
+import org.shop.services.auth.IAuthService;
 import org.shop.services.jwt.JWTService;
 import org.shop.services.product.IProductService;
 import org.springframework.http.ResponseEntity;

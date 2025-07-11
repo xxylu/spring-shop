@@ -1,16 +1,8 @@
 package org.shop.current;
 
-import org.shop.models.user.*;
-import org.shop.models.product.*;
-import org.shop.services.authentication.AuthService;
-import org.shop.services.authentication.IAuthService;
-import org.shop.services.product.IProductService;
-import org.shop.services.product.ProductService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-
-import java.util.Optional;
 
 @ComponentScan(basePackages = {
         "org.shop.controllers",

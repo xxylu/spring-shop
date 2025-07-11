@@ -1,4 +1,4 @@
-package org.shop.services.authentication;
+package org.shop.services.auth;
 
 import org.shop.models.user.Role;
 import org.shop.models.user.User;

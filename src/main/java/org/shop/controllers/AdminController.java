@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.shop.models.product.Product;
 import org.shop.repositories.cart.ICartRepository;
-import org.shop.services.authentication.IAuthService;
+import org.shop.services.auth.IAuthService;
 import org.shop.services.product.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -63,7 +63,7 @@ public class AdminController {
                     product.getDescription(),
                     product.getCategory()
             );
-            return ResponseEntity.ok().body("Dodano pojazd do Bazy");
+            return ResponseEntity.ok().body("Dodano produkt do Bazy o id: " + product.getId());
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bład");
     }
@@ -75,7 +75,7 @@ public class AdminController {
         Optional<User> u=  authService.findbyLogin(username);
         if(u.isPresent()) {
             productService.deleteProduct(u.get().getUserid(), request.id);
-            return ResponseEntity.ok().body("usunięto produkt z bazy");
+            return ResponseEntity.ok().body("usunięto produkt z bazy o id: " + request.id);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bład");
     }

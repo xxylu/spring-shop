@@ -1,4 +1,4 @@
-package org.shop.services.authentication;
+package org.shop.services.auth;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.shop.models.user.Role;
@@ -57,7 +57,7 @@ public class AuthService implements IAuthService {
                     .login(username)
                     .passwd(hashed)
                     .roles(role)
-                    .isActive(false)
+                    .isActive(true)
                     .build();
 
             userRepository.addUser(user);

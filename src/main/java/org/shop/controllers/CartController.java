@@ -2,7 +2,7 @@ package org.shop.controllers;
 
 import org.shop.models.cart.Cart;
 import org.shop.models.user.User;
-import org.shop.services.authentication.AuthService;
+import org.shop.services.auth.AuthService;
 import org.shop.services.cart.CartService;
 import org.shop.services.product.ProductService;
 import org.springframework.http.ResponseEntity;
@@ -63,7 +63,7 @@ public class CartController {
             cartService.addToCart(userId,cartId,cartRequest.productid);
             Optional<Cart> cart = cartService.getCart(userId);
             List<String> products = cart.get().convertFromJson();
-            return ResponseEntity.ok().body("Dodano produkt do koszyka\n obecny rozmiar: " + products.size());
+            return ResponseEntity.ok().body("Dodano produkt do koszyka\n obecny rozmiar: " + products.size() + "\n\n\n" + products);
         }
         return ResponseEntity.status(401).body("Błąd, user nie istnieje");
     }
@@ -78,7 +78,7 @@ public class CartController {
             cartService.removeFromCart(userId,cartId,cartRequest.productid);
             Optional<Cart> cart = cartService.getCart(userId);
             List<String> products = cart.get().convertFromJson();
-            return ResponseEntity.ok().body("Usunięto produkt do koszyka\n obecny rozmiar: " + products.size());
+            return ResponseEntity.ok().body("Usunięto produkt do koszyka\n obecny rozmiar: " + products.size()  + "\n\n\n" + products);
         }
         return ResponseEntity.status(401).body("Błąd, user nie istnieje");
     }
