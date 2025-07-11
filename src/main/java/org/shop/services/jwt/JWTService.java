@@ -59,14 +59,8 @@ public class JWTService {
                 .getBody();
     }
 
-    public boolean isTokenValid(String token, User user) {
-        final String username = extractUsername(token);
-        final String id = extractUserId(token);
-        final Boolean isActive = extractIsActive(token);
-        return username.equals(user.getLogin()) &&
-                id.equals(user.getUserid()) &&
-                isActive.equals(user.getIsActive()) &&
-                !isTokenExpired(token);
+    public boolean isTokenValid(String token) {
+        return !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

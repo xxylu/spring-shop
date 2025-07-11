@@ -51,4 +51,9 @@ public class ProductService implements IProductService {
             System.out.println("Usunięto produkt z bazy (isActive = false)");
         }
     }
+
+    @Override
+    public Optional<Product> findById(String productId) {
+        return Optional.ofNullable(productRepository.findById(productId));
+    }
 }

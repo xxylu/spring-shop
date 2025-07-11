@@ -13,4 +13,5 @@ public interface IAuthService {
     boolean register(String username, String password, Role role);
     void deleteUser(String adminId, String userId);
     void activateUser(String adminId, String userId);
+    Optional<User> findbyLogin(String login);
 }

@@ -104,4 +104,9 @@ public class AuthService implements IAuthService {
         userRepository.updateUser(user.get());
         System.out.println("Aktywowano konto");
     }
+
+    @Override
+    public Optional<User> findbyLogin(String login) {
+        return userRepository.findByUsername(login);
+    }
 }

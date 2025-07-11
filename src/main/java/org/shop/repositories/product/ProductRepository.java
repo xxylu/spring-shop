@@ -91,7 +91,7 @@ public class ProductRepository implements IProductRepository {
 
     @Override
     public Product findById(String id) {
-        String sql = "SELECT * FROM products WHERE id = ?";
+        String sql = "SELECT * FROM products WHERE productid = ?";
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)

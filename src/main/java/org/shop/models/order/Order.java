@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
+import org.shop.models.Payment.PaymentStatus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Order {
     private String userId;
     private OrderStatus status;
     private String products;  // JSON z listą Stringów (ID produktów)
+    private String paymentStatus;
 
     // Zapisuje listę ID produktów jako JSON
     public void convertToJson(List<String> productIds) {

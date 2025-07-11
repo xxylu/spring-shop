@@ -11,10 +11,12 @@ import org.shop.repositories.product.IProductRepository;
 import org.shop.repositories.product.ProductRepository;
 import org.shop.repositories.user.IUserRepository;
 import org.shop.repositories.user.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class CartService implements ICartService {
     IUserRepository userRepository = new UserRepository();
     IOrderRepository orderRepository = new OrderRepository();
@@ -99,5 +101,10 @@ public class CartService implements ICartService {
     public String getCartId(String userId) {
         Optional<Cart> cartOpt = cartRepository.findCartByUserId(userId);
         return cartOpt.map(Cart::getCartid).orElse(null);
+    }
+
+    @Override
+    public Optional<Cart> getCart(String userId) {
+        return cartRepository.findCartByUserId(userId);
     }
 }

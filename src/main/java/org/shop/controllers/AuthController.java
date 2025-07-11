@@ -1,23 +1,36 @@
 package org.shop.controllers;
 
 import org.shop.dto.LoginRequest;
-import org.shop.dto.RegisterRequest;
+import org.shop.models.product.Product;
 import org.shop.models.user.Role;
-import org.shop.models.user.User;
-import org.shop.services.authentication.AuthService;
 import org.shop.services.authentication.IAuthService;
+import org.shop.services.jwt.JWTService;
+import org.shop.services.product.IProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    IAuthService authService = new AuthService();
+    IAuthService authService;
+    IProductService productService;
+    JWTService jwtService;
+
+
+    public AuthController(
+            IAuthService authService,
+            JWTService jwtService,
+            IProductService productService
+    ) {
+        this.authService = authService;
+        this.jwtService = jwtService;
+        this.productService = productService;
+    }
 
 //    curl -X POST http://localhost:8080/auth/login \
 //            -H "Content-Type: application/json" \
@@ -27,23 +40,31 @@ public class AuthController {
 //     }'
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        Optional<User> u = authService.login(request.getLogin(), request.getPassword());
-        if (u.isPresent()) {
-            return ResponseEntity.ok("Zalogowano pomyślnie");
+
+        if (authService.userExists(request.getLogin())) {
+            return authService.login(request.getLogin(), request.getPassword())
+                    .map(jwtService::generateToken)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.status(401).body("Invalid credentials"));
         }
         return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<String> register(@RequestBody LoginRequest registerRequest) {
          if(authService.register(
                 registerRequest.getLogin(),
                 registerRequest.getPassword(),
-                Role.valueOf(registerRequest.getRole())
+                Role.valueOf("USER")
          )){
              return ResponseEntity.ok("Zarejestrowano ");
          }
-         return ResponseEntity.badRequest().build();
+         return ResponseEntity.badRequest().body("User już istnieje");
+    }
+
+    @PostMapping("/getallproducts")
+    public ResponseEntity<List<Product>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @PostMapping("/test")

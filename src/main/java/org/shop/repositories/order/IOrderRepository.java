@@ -8,6 +8,8 @@ public interface IOrderRepository {
     Optional<Order> findById(String id);
     void updateOrder(Order order);
     Optional<Order> findByUserId(String username);
-    public String createOrder(String userId, String CartId);
+    String createOrder(String userId, String CartId);
     void deleteOrder(String orderId);
+    void setStripeSesionId(String id, String orderId);
+    String getIdFromStripeSessionId(String sessionId);
 }

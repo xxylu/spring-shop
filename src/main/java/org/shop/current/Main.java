@@ -2,13 +2,8 @@ package org.shop.current;
 
 import org.shop.models.user.*;
 import org.shop.models.product.*;
-import org.shop.repositories.cart.CartRepository;
 import org.shop.services.authentication.AuthService;
 import org.shop.services.authentication.IAuthService;
-import org.shop.services.cart.CartService;
-import org.shop.services.cart.ICartService;
-import org.shop.services.order.IOrderService;
-import org.shop.services.order.OrderService;
 import org.shop.services.product.IProductService;
 import org.shop.services.product.ProductService;
 import org.springframework.boot.SpringApplication;
@@ -29,52 +24,21 @@ import java.util.Optional;
 @SpringBootApplication
 public class Main {
     public static void main(String[] args) {
-        IProductService productService = new ProductService();
-        IAuthService authService = new AuthService();
-        authService.register("admin2", "123", Role.ADMIN);
-        Optional<User> u = authService.login("admin2", "123");
-        productService.addProduct(u.get().getUserid(), "Iphone 15 pro max", 600000, "Nowy telefon Iphone 15 pro max", ProductCategory.Electronics);
-        productService.addProduct(u.get().getUserid(), "Samsung Galaxy S24 Ultra", 550000, "Flagowy smartfon Samsunga z doskonałym aparatem", ProductCategory.Electronics);
-        productService.addProduct(u.get().getUserid(), "PlayStation 5", 250000, "Konsola najnowszej generacji od Sony", ProductCategory.Gaming);
-        productService.addProduct(u.get().getUserid(), "Dell XPS 13", 450000, "Lekki laptop z ekranem 4K", ProductCategory.Computers);
-        productService.addProduct(u.get().getUserid(), "Apple Watch Series 9", 150000, "Nowoczesny smartwatch od Apple", ProductCategory.Wearables);
-        productService.addProduct(u.get().getUserid(), "GoPro Hero 12", 120000, "Kamera sportowa o wysokiej rozdzielczości", ProductCategory.Photography);
-        productService.addProduct(u.get().getUserid(), "Logitech MX Master 3S", 40000, "Profesjonalna mysz bezprzewodowa", ProductCategory.Accessories);
-        productService.addProduct(u.get().getUserid(), "Nintendo Switch OLED", 180000, "Konsola przenośna z ekranem OLED", ProductCategory.Gaming);
-        productService.addProduct(u.get().getUserid(), "Canon EOS R7", 680000, "Bezlusterkowy aparat cyfrowy dla entuzjastów", ProductCategory.Photography);
-        productService.addProduct(u.get().getUserid(), "JBL Charge 5", 70000, "Wodoodporny głośnik Bluetooth o dużej mocy", ProductCategory.Audio);
+//        IProductService productService = new ProductService();
+//        IAuthService authService = new AuthService();
+//        authService.register("admin2", "123", Role.ADMIN);
+//        Optional<User> u = authService.login("admin2", "123");
+//        productService.addProduct(u.get().getUserid(), "Iphone 15 pro max", 600000, "Nowy telefon Iphone 15 pro max", ProductCategory.Electronics);
+//        productService.addProduct(u.get().getUserid(), "Samsung Galaxy S24 Ultra", 550000, "Flagowy smartfon Samsunga z doskonałym aparatem", ProductCategory.Electronics);
+//        productService.addProduct(u.get().getUserid(), "PlayStation 5", 250000, "Konsola najnowszej generacji od Sony", ProductCategory.Gaming);
+//        productService.addProduct(u.get().getUserid(), "Dell XPS 13", 450000, "Lekki laptop z ekranem 4K", ProductCategory.Computers);
+//        productService.addProduct(u.get().getUserid(), "Apple Watch Series 9", 150000, "Nowoczesny smartwatch od Apple", ProductCategory.Wearables);
+//        productService.addProduct(u.get().getUserid(), "GoPro Hero 12", 120000, "Kamera sportowa o wysokiej rozdzielczości", ProductCategory.Photography);
+//        productService.addProduct(u.get().getUserid(), "Logitech MX Master 3S", 40000, "Profesjonalna mysz bezprzewodowa", ProductCategory.Accessories);
+//        productService.addProduct(u.get().getUserid(), "Nintendo Switch OLED", 180000, "Konsola przenośna z ekranem OLED", ProductCategory.Gaming);
+//        productService.addProduct(u.get().getUserid(), "Canon EOS R7", 680000, "Bezlusterkowy aparat cyfrowy dla entuzjastów", ProductCategory.Photography);
+//        productService.addProduct(u.get().getUserid(), "JBL Charge 5", 70000, "Wodoodporny głośnik Bluetooth o dużej mocy", ProductCategory.Audio);
 
         SpringApplication.run(Main.class, args);
-    }
-
-
-    private static void CartService() {
-        IProductService productService = new ProductService();
-        ICartService cartService = new CartService();
-        System.out.println(productService.getAllProducts());
-        IAuthService authService = new AuthService();
-        Optional<User> u = authService.login("admin2", "123");
-        String cart = cartService.createCart(u.get().getUserid());
-        cartService.addToCart(u.get().getUserid(), cartService.getCartId(u.get().getUserid()), "fcfc0da5-53fd-4213-bd11-2c9d889987f0");
-        cartService.removeFromCart(u.get().getUserid(),cartService.getCartId(u.get().getUserid()), "fcfc0da5-53fd-4213-bd11-2c9d889987f0");
-        cartService.clearCart(cartService.getCartId(u.get().getUserid()));
-        cartService.deleteCart(u.get().getUserid());
-    }
-    private static void AuthService() {
-        IAuthService authService = new AuthService();
-        authService.register("admin2", "123", Role.ADMIN);
-        Optional<User> u = authService.login("admin2", "123");
-        authService.register("user", "1234", Role.USER);
-        Optional<User> u2 = authService.login("user", "1234");
-        authService.activateUser(u2.get().getUserid(), u2.get().getUserid());
-        authService.deleteUser(u.get().getUserid(), u2.get().getUserid());
-    }
-
-    private static void ProductService() {
-        IProductService productService = new ProductService();
-        IAuthService authService = new AuthService();
-        //AuthService(); // test AuthService
-        Optional<User> u = authService.login("admin2", "123");
-        System.out.println(productService.getAllProducts());
     }
 }
