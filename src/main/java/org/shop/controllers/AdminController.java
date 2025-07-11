@@ -48,6 +48,20 @@ public class AdminController {
         return "Witaj w panelu administratora!";
     }
 
+    /*
+    curl -X POST http://localhost:8080/admin/addproduct \
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer " \
+ -d '{
+   "id": "test-id",
+   "title": "Nowy produkt",
+   "price": 199.99,
+   "description": "Opis nowego produktu",
+   "category": "Electronics",
+   "isactive": true
+ }'
+     */
+
     @PostMapping("/addproduct")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> addProduct(@RequestBody Product product, Authentication authentication) {
@@ -68,6 +82,15 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bład");
     }
 
+
+    /*
+    curl -X POST http://localhost:8080/admin/removeproduct \
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer " \
+ -d '{
+   "id": "test-id",
+   }'
+     */
     @PostMapping("/removeproduct")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> removeVehicle(@RequestBody UseridRequest request, Authentication authentication) {

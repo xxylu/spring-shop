@@ -31,13 +31,14 @@ public class AuthController {
         this.jwtService = jwtService;
         this.productService = productService;
     }
-
-//    curl -X POST http://localhost:8080/auth/login \
-//            -H "Content-Type: application/json" \
-//            -d '{
-//            "login": "admin2",
-//            "password": "123"
-//     }'
+/*
+    curl -X POST http://localhost:8080/auth/login \
+            -H "Content-Type: application/json" \
+            -d '{
+            "login": "user",
+            "password": "123"
+     }'
+*/
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
 
@@ -49,6 +50,15 @@ public class AuthController {
         }
         return ResponseEntity.badRequest().build();
     }
+
+    /*
+    curl -X POST http://localhost:8080/auth/register \
+            -H "Content-Type: application/json" \
+            -d '{
+            "login": "user",
+            "password": "123"
+     }'
+*/
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody LoginRequest registerRequest) {
@@ -62,6 +72,8 @@ public class AuthController {
          return ResponseEntity.badRequest().body("User już istnieje");
     }
 
+
+   // curl -X POST http://localhost:8080/auth/getallproducts
     @PostMapping("/getallproducts")
     public ResponseEntity<List<Product>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());

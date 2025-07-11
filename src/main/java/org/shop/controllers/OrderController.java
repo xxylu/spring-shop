@@ -49,6 +49,12 @@ public class OrderController {
         public String orderId;
     }
 
+    /*
+    curl -X POST http://localhost:8080/api/order/create \
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer " \
+     */
+
     @PostMapping("/create")
     public ResponseEntity<String> createOrder(Authentication authentication) {
         String username = authentication.getName();

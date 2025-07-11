@@ -29,6 +29,13 @@ public class CartController {
         public String productid;
     }
 
+    /*
+    curl -X POST http://localhost:8080/api/cart/createcart \
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer "
+
+     */
+
     @PostMapping("/createcart")
     public ResponseEntity<String> createCart(Authentication authentication) {
         String username = authentication.getName();
@@ -42,6 +49,14 @@ public class CartController {
         return ResponseEntity.status(401).body("Błąd, user nie istnieje");
     }
 
+
+    /*
+    curl -X POST http://localhost:8080/api/cart/deletecart \
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer "
+
+    */
+
     @DeleteMapping("/deletecart")
     public ResponseEntity<String> deleteCart(Authentication authentication) {
         String username = authentication.getName();
@@ -53,7 +68,16 @@ public class CartController {
         return ResponseEntity.status(401).body("Błąd, user nie istnieje");
     }
 
-    @GetMapping("/addtocart")
+
+    /*
+        curl -X GET http://localhost:8080/api/cart/addtocart \
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer " \
+ -d '{
+   "productid":"id"
+ }'
+     */
+    @PostMapping("/addtocart")
     public ResponseEntity<String> addToCart(@RequestBody CartRequest cartRequest, Authentication authentication) {
         String username = authentication.getName();
         Optional<User> u = authService.findbyLogin(username);
@@ -68,6 +92,14 @@ public class CartController {
         return ResponseEntity.status(401).body("Błąd, user nie istnieje");
     }
 
+    /*
+          curl -X GET http://localhost:8080/api/cart/removefromcart \
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer " \
+ -d '{
+   "productid":"id"
+ }'
+     */
     @DeleteMapping("/removefromcart")
     public ResponseEntity<String> removeFromCart(@RequestBody CartRequest cartRequest, Authentication authentication) {
         String username = authentication.getName();
