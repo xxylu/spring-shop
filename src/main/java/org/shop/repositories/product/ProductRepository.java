@@ -37,7 +37,7 @@ public class ProductRepository implements IProductRepository {
 
     @Override
     public void deleteById(String id) {
-        String sql = "UPDATE products SET isactive = FALSE WHERE id = ?";
+        String sql = "UPDATE products SET isactive = FALSE WHERE productid = ?";
 
         try (
                 Connection connection = DatabaseConnection.getInstance().getConnection();
